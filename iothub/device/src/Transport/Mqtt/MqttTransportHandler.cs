@@ -281,19 +281,8 @@ namespace Microsoft.Azure.Devices.Client.Transport.Mqtt
                         await SubscribeCloudToDeviceMessagesAsync().ConfigureAwait(true);
                     }
 
-                    Message message = null;
-                    try
-                    {
-                        await WaitUntilC2dMessageArrivesAsync(cancellationToken).ConfigureAwait(false);
-                        message = ProcessMessage();
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        if (Logging.IsEnabled)
-                            Logging.Error(this, $"The cancellation token expired before a C2D message could arrive.", nameof(ReceiveAsync));
-                    }
-
-                    return message;
+                    await WaitUntilC2dMessageArrivesAsync(cancellationToken).ConfigureAwait(false);
+                    return ProcessMessage();
                 }
                 finally
                 {
@@ -331,19 +320,8 @@ namespace Microsoft.Azure.Devices.Client.Transport.Mqtt
                 TimeSpan timeout = timeoutHelper.GetRemainingTime();
                 using var cts = new CancellationTokenSource(timeout);
 
-                Message message = null;
-                try
-                {
-                    await WaitUntilC2dMessageArrivesAsync(cts.Token).ConfigureAwait(false);
-                    message = ProcessMessage();
-                }
-                catch (OperationCanceledException)
-                {
-                    if (Logging.IsEnabled)
-                        Logging.Error(this, $"The cancellation token expired before a C2D message could arrive.", nameof(ReceiveAsync));
-                }
-
-                return message;
+                await WaitUntilC2dMessageArrivesAsync(cts.Token).ConfigureAwait(false);
+                return ProcessMessage();
             }
             finally
             {
