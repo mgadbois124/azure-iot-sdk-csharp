@@ -35,6 +35,11 @@ using Newtonsoft.Json;
 
 namespace Microsoft.Azure.Devices.Client.Transport.Mqtt
 {
+    //
+    // Note on ConfigureAwait: dotNetty is using a custom TaskScheduler that binds Tasks to the corresponding
+    // EventLoop. To limit I/O to the EventLoopGroup and keep Netty semantics, we are going to ensure that the
+    // task continuations are executed by this scheduler using ConfigureAwait(true).
+    //
     internal sealed class MqttTransportHandler : TransportHandler, IMqttIotHubEventHandler
     {
         private const int ProtocolGatewayPort = 8883;
